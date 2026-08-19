@@ -2,9 +2,9 @@ name: Continuous Integration
 
 on:
   push:
-    branches: [ $default-branch ]
+    branches: [ main ]
   pull_request:
-    branches: [ $default-branch ]
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
@@ -13,7 +13,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
-      - name: Set up Python 3.10
+      - name: Set up Python 3.14
         uses: actions/setup-python@v6
         with:
           python-version: "3.14"
@@ -21,3 +21,9 @@ jobs:
         run: pip install -r requirements.txt
       - name: Formatting
         run: black web_app/
+      - name: Linting
+        run: pylint --rcfile=web_app/.pylintrc -j=0 web_app/
+      - name: Type checking
+        run: mypy --config-file=web_app/mypy.ini web_app/
+      - name: Unit tests
+        run: pytest -c web_app/pytest.ini
