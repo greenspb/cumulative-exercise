@@ -12,3 +12,9 @@ def test_convert():
         "lat": "40.4416941",
         "long": "-79.9900861",
     }
+
+
+def test_weather():
+    result = main.weather(40.4416941, -79.9900861)
+    for attribute in ["elevation", "current", "current_units"]:
+        assert attribute in result

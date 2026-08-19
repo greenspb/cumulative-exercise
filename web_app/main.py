@@ -40,3 +40,18 @@ def convert(state: str, city: str) -> dict[str, str]:
         ) from e
 
     return result
+
+
+@app.get("/weather")
+def weather(lat: float, long: float):
+    print(f"Getting weather for {lat}, {long}")
+    url = "https://api.open-meteo.com"
+
+    # &current=temperature_2m
+    payload = {"latitude": lat, "longitude": long, "current": "temperature_2m"}
+    response = requests.get(f"{url}/v1/forecast", params=payload, timeout=2)  # type: ignore[arg-type]
+
+    response.raise_for_status()
+
+    print(response.status_code, response.content)
+    return response.json()
