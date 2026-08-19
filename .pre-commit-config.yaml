@@ -1,7 +1,7 @@
 # Pre-commit hooks configuration for Python projects
 # See https://pre-commit.com for more information
 # See https://pre-commit.com/hooks.html for more hooks
-
+fail_fast: true
 repos:
   # General pre-commit hooks
   - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -39,6 +39,7 @@ repos:
       - id: black
         name: Format code with Black
         language_version: python3
+        files: ^web_app/
 
   # Python import sorting with isort
   - repo: https://github.com/pycqa/isort
@@ -47,18 +48,17 @@ repos:
       - id: isort
         name: Sort imports with isort
         args: ["--profile", "black"]
+        files: ^web_app/
 
-  - repo: local
+  # Python linting with pylint (modern, fast linter)
+  - repo: https://github.com/pycqa/pylint
+    rev: v4.0.7 # Use the desired version of Pylint
     hooks:
-    - id: pylint
-      name: pylint
-      entry: pylint
-      language: system
-      types: [python]
-      args:
-        [
-          "--rcfile=web_app/.pylintrc", "web_app/"
-        ]
+      - id: pylint
+        args:
+          - --rcfile=web_app/.pylintrc
+          - -j=0
+        files: ^web_app/
 
 
   # Python type checking with mypy
@@ -66,21 +66,17 @@ repos:
     rev: v2.3.1
     hooks:
       - id: mypy
-        name: Type check with mypy
-        args: [--config-file=web_app/mypy.ini]
+        name: mypy
         files: ^web_app/
+        args: [--config-file=web_app/mypy.ini]
         additional_dependencies: [types-requests, fastapi]
 
   # Python testing with pytest
-  - repo: local
+  - repo: https://github.com/christophmeissner/pytest-pre-commit
+    rev: 1.0.0 # Use the latest version or tag
     hooks:
-      - id: pytest-check
-        name: Run pytest on changed files
-        entry: pytest
-        language: system
-        pass_filenames: false
-        always_run: false
-        stages: [pre-commit]
-        types: [python]
-        verbose: true
-        args: [-c, web_app/pytest.ini]
+    - id: pytest
+      pass_filenames: false
+      always_run: true
+      args: [-c, web_app/pytest.ini]
+      additional_dependencies: [requests, fastapi]
