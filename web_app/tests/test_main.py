@@ -8,4 +8,7 @@ def test_root():
 
 
 def test_convert():
-    assert main.convert("PA", "Pittsburgh") == {"lat": "40.4416941", "long": "-79.9900861"}
+    assert main.convert("PA", "Pittsburgh") == {
+        "lat": "40.4416941",
+        "long": "-79.9900861",
+    }
